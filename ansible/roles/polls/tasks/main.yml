@@ -1,0 +1,47 @@
+---
+- name: Create the Polls Project
+  k8s:
+    name: "{{ project_name }}"
+    api_version: project.openshift.io/v1
+    kind: Project
+    state: present
+
+- name: Create the Polls ImageStream
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'polls-is.yml') }}"
+  
+- name: Create the Polls BuildConfig
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'polls-bc.yml') }}"
+
+- name: Create the Polls Service
+  k8s:
+    state: present
+    definition:
+      kind: Service
+      apiVersion: v1
+      metadata:
+        name: appserver
+        namespace: "{{ project_name }}"
+      spec:
+        ports:
+          - name: 8080-tcp
+            protocol: TCP
+            port: 8080
+            targetPort: 8080
+        selector:
+          app: appserver
+          deploymentconfig: appserver
+
+- name: Create the Polls Route
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'polls-route.yml') }}"
+
+- name: Create the Polls Deployment
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'polls-dc.yml') }}"
+

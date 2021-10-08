@@ -1,0 +1,4 @@
+---
+project_name: polls-preprod
+replica_count: 1
+
