@@ -1,9 +1,9 @@
 #!/usr/bin/env groovy
 
-def towerUrl = 'tower.server'
-def towerInventory = 'tower.inventory'
-def towerCredential = 'tower.credential'
-def towerJobTemplate = 'Job Template Name'
+def towerUrl = 'towerUrl'
+def towerInventory = 'towerInventory'
+def towerCredential = 'towerCredential'
+def towerJobTemplate = 'towerJobTemplate'
 
 pipeline {
     agent any
@@ -92,5 +92,26 @@ replica_count: 2''',
                 )
             }
         }
+        stage('Submit Promotion Ticket') {
+            steps {
+                ansibleTower(
+                    towerServer: "${towerUrl}",
+                    towerCredentialsId: '',
+                    templateType: 'job',
+                    jobTemplate: "Submit Ticket",
+                    towerLogLevel: 'full',
+                    inventory: "${towerInventory}",
+                    jobTags: '',
+                    skipJobTags: '',
+                    limit: '',
+                    removeColor: false,
+                    verbose: true,
+                    credential: "${towerCredential}",
+                    extraVars: "sn_short_description:  Please release build ${env.BUILD_TAG} of Polls to Production",
+                    async: false
+                )
+            }
+        }
     }
 }
+
