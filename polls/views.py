@@ -3,7 +3,7 @@ from django.http import HttpResponse
 
 def index(request):
     """Home page"""
-    return HttpResponse("Hello, world.")
+    return HttpResponse("Polls application.")
 
 def health(request):
     """Takes an request as a parameter and gives the count of pageview objects as reponse"""
