@@ -25,24 +25,7 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject( 'polls-dev' ) {
-                            def bc = openshift.selector("bc", "appserver")
-                            def builds
-                            
-                            openshift.startBuild("appserver")
-                            
-                            bc.object()
-                            builds = bc.related( "builds" )
-                            
-                            builds.untilEach {
-                                return it.object().status.phase == "Complete"
-                            }
-                            
-                            def result = bc.logs()
-                            echo "Result of logs operation:"
-                            echo "  status: ${result.status}"
-                            echo "  stderr: ${result.err}"
-                            echo "  number of actions to fulfill: ${result.actions.size()}"
-                            echo "  first action executed: ${result.actions[0].cmd}"
+                            openshift.selector("bc", "appserver").startBuild("--follow=true")
                         }
                     }
                 }
