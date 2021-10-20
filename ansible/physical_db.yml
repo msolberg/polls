@@ -3,6 +3,7 @@
   hosts: localhost
   gather_facts: False
   vars:
+    db_region: "us-east-2"
     db_instance_name: "polls-db"
     db_vpc_subnet_id: "vpc_subnet_id"
     db_key_name: "key_name"
@@ -15,6 +16,7 @@
   - name: Create the DB VM
     ec2_instance:
       name: "{{ db_instance_name }}"
+      region: "{{ db_region }}"
       vpc_subnet_id: "{{ db_vpc_subnet_id }}"
       instance_type: "{{ db_instance_type }}"
       image_id: "{{ db_image_id }}"
