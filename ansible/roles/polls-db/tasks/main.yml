@@ -1,0 +1,31 @@
+---
+- name: Install postgresql package
+  yum:
+    name: "postgresql-server"
+    state: present
+  become: yes
+
+- name: Install postgresql python library
+  yum:
+    name: "python3-psycopg2"
+    state: present
+  become: yes
+  
+- name: Initialize postgresql database
+  command: /usr/bin/postgresql-setup --initdb
+  args:
+    creates: /var/lib/pgsql/data/postgresql.conf
+  become: yes
+  
+- name: Start postgresql service
+  service:
+    name: "postgresql"
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Create postgresql db for polls
+  postgresql_db:
+    name: polls
+  become: true
+  become_user: postgres

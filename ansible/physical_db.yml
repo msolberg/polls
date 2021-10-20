@@ -1,0 +1,49 @@
+---
+- name: Deploy DB VM for Polls App
+  hosts: localhost
+  gather_facts: False
+  vars:
+    db_instance_name: "polls-db"
+    db_vpc_subnet_id: "vpc_subnet_id"
+    db_key_name: "key_name"
+    db_instance_type: "t2.small"
+    db_image_id: "ami-0ba62214afa52bec7"
+    db_security_group: "polls-db"
+    db_volume_size: 10
+
+  tasks:
+  - name: Create the DB VM
+    ec2_instance:
+      name: "{{ db_instance_name }}"
+      vpc_subnet_id: "{{ db_vpc_subnet_id }}"
+      instance_type: "{{ db_instance_type }}"
+      image_id: "{{ db_image_id }}"
+      key_name: "{{ db_key_name }}"
+      security_group: "{{ db_security_group }}"
+      volumes:
+        - device_name: /dev/sda1
+          ebs:
+            volume_size: "{{ db_volume_size }}"
+            delete_on_termination: true
+    register: instance
+  
+  - name: Wait for Instance to be Available
+    wait_for: host={{ instance.instances[0].public_ip_address}} port=22 delay=10
+  
+  - name: Show DB info
+    debug:
+      var: instance.instances[0].public_ip_address
+  
+  - name: Add Instance to Dynamic Inventory
+    add_host:
+      name: "{{ db_instance_name }}"
+      ansible_ssh_user: "ec2-user"
+      ansible_ssh_host: "{{ instance.instances[0].public_ip_address }}"
+      groups:
+      - dbservers
+  
+- name: Configure Database Host
+  hosts: dbservers
+  roles:
+  - name: polls-db
+
