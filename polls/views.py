@@ -16,7 +16,7 @@ def health(request):
     """Takes an request as a parameter and gives the count of pageview objects as reponse"""
     logger = logging.getLogger(__name__)
     string = "0"
-    for i in range(8000):
+    for i in range(16000):
         string = string + str(i)
 
     logger.warning(string)
