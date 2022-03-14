@@ -5,6 +5,8 @@ from django.urls import reverse
 
 from .models import Question
 
+import logging
+
 def index(request):
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
     context = {'latest_question_list': latest_question_list}
@@ -12,6 +14,13 @@ def index(request):
 
 def health(request):
     """Takes an request as a parameter and gives the count of pageview objects as reponse"""
+    logger = logging.getLogger(__name__)
+    string = "0"
+    for i in range(1000):
+        string = string + str(i)
+
+    logger.warning(string)
+    
     return HttpResponse("Healthy!")
 
 def detail(request, question_id):
