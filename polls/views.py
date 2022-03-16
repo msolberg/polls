@@ -14,13 +14,6 @@ def index(request):
 
 def health(request):
     """Takes an request as a parameter and gives the count of pageview objects as reponse"""
-    logger = logging.getLogger(__name__)
-    string = "0"
-    for i in range(12000):
-        string = string + str(i)
-
-    logger.warning(string)
-    
     return HttpResponse("Healthy!")
 
 def detail(request, question_id):
